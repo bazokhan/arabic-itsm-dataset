@@ -1,0 +1,107 @@
+{
+  "version": "1.0",
+  "taxonomy": [
+    {
+      "l1": "Access",
+      "l2": "Account",
+      "l3": ["Password Reset", "Account Locked", "Profile Update"],
+      "tags": ["password", "locked", "reset", "username", "2fa", "mfa", "sso"]
+    },
+    {
+      "l1": "Access",
+      "l2": "Permissions",
+      "l3": ["Role Request", "Permission Denied", "Admin Access"],
+      "tags": ["rbac", "permission", "access", "role", "admin", "denied"]
+    },
+    {
+      "l1": "Access",
+      "l2": "MFA/SSO",
+      "l3": ["MFA Failure", "SSO Login Issue", "Authenticator Issue"],
+      "tags": ["mfa", "2fa", "sso", "authenticator", "otp", "login"]
+    },
+
+    {
+      "l1": "Network",
+      "l2": "WiFi",
+      "l3": ["Connectivity", "Authentication", "Slow Speed"],
+      "tags": ["wifi", "ssid", "signal", "slow", "disconnect", "router"]
+    },
+    {
+      "l1": "Network",
+      "l2": "VPN",
+      "l3": ["Connection Failure", "Credentials", "Split Tunnel"],
+      "tags": ["vpn", "tunnel", "remote", "timeout", "certificate"]
+    },
+    {
+      "l1": "Network",
+      "l2": "Internet/LAN",
+      "l3": ["No Internet", "DNS", "Latency"],
+      "tags": ["dns", "latency", "packet", "gateway", "ip", "dhcp"]
+    },
+
+    {
+      "l1": "Hardware",
+      "l2": "Laptop/Desktop",
+      "l3": ["Boot Issue", "Performance", "Battery"],
+      "tags": ["battery", "boot", "slow", "overheat", "fan", "disk"]
+    },
+    {
+      "l1": "Hardware",
+      "l2": "Printer/Scanner",
+      "l3": ["Print Failure", "Driver", "Paper Jam"],
+      "tags": ["printer", "driver", "paper", "toner", "scan", "queue"]
+    },
+    {
+      "l1": "Hardware",
+      "l2": "Peripherals",
+      "l3": ["Keyboard/Mouse", "Monitor", "Docking Station"],
+      "tags": ["monitor", "hdmi", "usb", "keyboard", "mouse", "dock"]
+    },
+
+    {
+      "l1": "Software",
+      "l2": "Email/Calendar",
+      "l3": ["Outlook Issue", "Mailbox Access", "Sync Problem"],
+      "tags": ["outlook", "email", "mailbox", "sync", "calendar"]
+    },
+    {
+      "l1": "Software",
+      "l2": "Office Apps",
+      "l3": ["Word/Excel", "License", "Crash"],
+      "tags": ["excel", "word", "powerpoint", "license", "crash"]
+    },
+    {
+      "l1": "Software",
+      "l2": "Business App",
+      "l3": ["Bug", "Feature Request", "Integration"],
+      "tags": ["bug", "feature", "api", "integration", "error", "request"]
+    },
+
+    {
+      "l1": "Security",
+      "l2": "Malware/Phishing",
+      "l3": ["Phishing Email", "Suspicious Link", "Virus Alert"],
+      "tags": ["phishing", "malware", "virus", "spam", "suspicious"]
+    },
+    {
+      "l1": "Security",
+      "l2": "Policy/Compliance",
+      "l3": ["Blocked Site", "Device Encryption", "Data Access"],
+      "tags": ["policy", "blocked", "compliance", "encryption", "dlp"]
+    },
+
+    {
+      "l1": "Service",
+      "l2": "Request",
+      "l3": ["New Device", "New Account", "Software Install"],
+      "tags": ["request", "install", "setup", "new", "provision"]
+    },
+    {
+      "l1": "Service",
+      "l2": "Incident",
+      "l3": ["Outage", "Degradation", "Intermittent"],
+      "tags": ["outage", "down", "degraded", "incident", "intermittent"]
+    }
+  ]
+}
+
