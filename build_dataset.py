@@ -1,43 +1,41 @@
 import json
 import glob
-import re
+import argparse
+import os
 from datetime import datetime
 from typing import Dict, Any, List, Tuple
 import pandas as pd
 
-# ---------- Config ----------
-TAXONOMY_PATH = "taxonomy_itsm.json"
-INPUT_GLOB = "parts/part_*.jsonl"     # folder for partial generations
-OUT_JSONL = "dataset_clean.jsonl"
-OUT_CSV = "dataset_clean.csv"
-
-# ---------- Arabic preprocessing (script-derived) ----------
-_AR_DIACRITICS = re.compile(r"[\u0617-\u061A\u064B-\u0652\u0657-\u065F\u0670]")
-_AR_TATWEEL = "\u0640"
-
-def preprocess_ar(text: str) -> str:
-    if text is None:
-        return ""
-    t = str(text)
-
-    # remove tatweel & diacritics
-    t = t.replace(_AR_TATWEEL, "")
-    t = _AR_DIACRITICS.sub("", t)
-
-    # normalize common Arabic variants
-    t = t.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا")
-    t = t.replace("ى", "ي")
-    t = t.replace("ؤ", "و").replace("ئ", "ي")
-    t = t.replace("ة", "ه")  # optional; you may comment this out if you prefer keeping ة
-
-    # collapse elongation like حلوووو -> حلوو (keep slight emphasis)
-    t = re.sub(r"(.)\1{3,}", r"\1\1", t)
-
-    # normalize whitespace
-    t = re.sub(r"[ \t]+", " ", t)
-    t = re.sub(r"\n{3,}", "\n\n", t)
-    t = t.strip()
-    return t
+# ---------- CLI ----------
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Validate and merge Arabic ITSM JSONL parts into a clean dataset."
+    )
+    parser.add_argument(
+        "--taxonomy", default="taxonomy_itsm_v1.json",
+        help="Path to taxonomy JSON file (default: taxonomy_itsm_v1.json)"
+    )
+    parser.add_argument(
+        "--input-glob", default="parts/part_*.jsonl",
+        help="Glob pattern for input JSONL part files (default: parts/part_*.jsonl)"
+    )
+    parser.add_argument(
+        "--out-jsonl", default="dataset_clean.jsonl",
+        help="Output path for clean JSONL (default: dataset_clean.jsonl)"
+    )
+    parser.add_argument(
+        "--out-csv", default="dataset_clean.csv",
+        help="Output path for clean CSV (default: dataset_clean.csv)"
+    )
+    parser.add_argument(
+        "--out-rejected", default="dataset_rejected.jsonl",
+        help="Output path for rejected rows JSONL (default: dataset_rejected.jsonl)"
+    )
+    parser.add_argument(
+        "--apply-fixes", action="store_true",
+        help="Before building, merge *_fixed.jsonl rows into their original part files, then delete the fixed and rejected files"
+    )
+    return parser.parse_args()
 
 # ---------- Taxonomy ----------
 def load_taxonomy(path: str) -> Tuple[set, Dict[Tuple[str,str,str], Dict[str, Any]]]:
@@ -145,14 +143,82 @@ def validate_row(obj: Dict[str, Any], allowed_paths: set) -> List[str]:
 
     return errors
 
+# ---------- Apply fixes ----------
+def apply_fixes(input_glob: str, rejected_path: str):
+    """Merge *_fixed.jsonl back into originals, then delete fixed + rejected files."""
+    parts_dir = os.path.dirname(input_glob) or "."
+    fixed_files = sorted(glob.glob(os.path.join(parts_dir, "*_fixed.jsonl")))
+    if not fixed_files:
+        print("No *_fixed.jsonl files found, nothing to apply.")
+        return
+
+    for fixed_path in fixed_files:
+        # parts/part_001_fixed.jsonl -> parts/part_001.jsonl
+        base = fixed_path.rsplit("_fixed.jsonl", 1)[0] + ".jsonl"
+        if not os.path.exists(base):
+            print(f"Warning: no original found for {fixed_path}, skipping")
+            continue
+
+        # Build replacement map: ticket_id -> fixed line
+        replacements = {}
+        with open(fixed_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                    replacements[obj["ticket_id"]] = line
+                except Exception:
+                    pass
+
+        # Read original, replace rows whose ticket_id has a fix
+        merged = []
+        with open(base, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                    tid = obj.get("ticket_id")
+                    if tid in replacements:
+                        merged.append(replacements.pop(tid))
+                    else:
+                        merged.append(line)
+                except Exception:
+                    merged.append(line)
+
+        # Append any fixed rows with new ticket_ids
+        for line in replacements.values():
+            merged.append(line)
+
+        # Write merged back to original
+        with open(base, "w", encoding="utf-8") as f:
+            for line in merged:
+                f.write(line + "\n")
+
+        os.remove(fixed_path)
+        print(f"Merged {fixed_path} -> {base}")
+
+    # Delete stale rejected file
+    if os.path.exists(rejected_path):
+        os.remove(rejected_path)
+        print(f"Deleted {rejected_path}")
+
 # ---------- Main ----------
 def main():
-    allowed_paths, _ = load_taxonomy(TAXONOMY_PATH)
+    args = parse_args()
+
+    if args.apply_fixes:
+        apply_fixes(args.input_glob, args.out_rejected)
+
+    allowed_paths, _ = load_taxonomy(args.taxonomy)
 
     # Read all partial jsonl files
-    files = sorted(glob.glob(INPUT_GLOB))
+    files = sorted(glob.glob(args.input_glob))
     if not files:
-        raise SystemExit(f"No files matched: {INPUT_GLOB}")
+        raise SystemExit(f"No files matched: {args.input_glob}")
 
     seen_ids = set()
     cleaned: List[Dict[str, Any]] = []
@@ -178,13 +244,10 @@ def main():
                     errs.append("bad:duplicate_ticket_id")
 
                 if errs:
-                    rejected.append({"source": fp, "line": line_no, "reason": errs, "ticket_id": tid})
+                    rejected.append({"source": fp, "line": line_no, "reason": errs, "ticket": obj})
                     continue
 
                 seen_ids.add(tid)
-
-                # Derived fields (script-derived)
-                obj["preprocessed_ar"] = preprocess_ar(obj["title_ar"] + "\n" + obj["description_ar"])
 
                 # Make tags stable (trim + lower for english tags)
                 obj["tags"] = [t.strip() for t in obj["tags"] if t and str(t).strip()]
@@ -192,7 +255,7 @@ def main():
                 cleaned.append(obj)
 
     # Write clean JSONL
-    with open(OUT_JSONL, "w", encoding="utf-8") as f:
+    with open(args.out_jsonl, "w", encoding="utf-8") as f:
         for obj in cleaned:
             f.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
@@ -205,23 +268,27 @@ def main():
     col_order = [
         "ticket_id", "created_at", "updated_at", "channel", "model",
         "dialect",
-        "title_ar", "description_ar", "preprocessed_ar",
+        "title_ar", "description_ar",
         "category_level_1", "category_level_2", "category_level_3", "category_path",
         "tags", "labels_json",
         "impact", "urgency", "priority", "sentiment"
     ]
     df = df[[c for c in col_order if c in df.columns]]
 
-    df.to_csv(OUT_CSV, index=False, encoding="utf-8-sig")
+    df.to_csv(args.out_csv, index=False, encoding="utf-8-sig")
 
-    print(f"✅ Clean rows: {len(cleaned)}")
-    print(f"❌ Rejected rows: {len(rejected)}")
+    # Write rejected JSONL (or clean up stale file)
     if rejected:
-        # small sample report
-        sample = rejected[:10]
-        print("\nSample rejected:")
-        for r in sample:
-            print(r)
+        with open(args.out_rejected, "w", encoding="utf-8") as f:
+            for obj in rejected:
+                f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+    elif os.path.exists(args.out_rejected):
+        os.remove(args.out_rejected)
+
+    print(f"Clean rows: {len(cleaned)}")
+    print(f"Rejected rows: {len(rejected)}")
+    if rejected:
+        print(f"Rejected rows written to: {args.out_rejected}")
 
     # Optional: print allowed paths for prompt pasting
     print("\n--- Allowed category paths (copy into prompt) ---")

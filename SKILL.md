@@ -5,17 +5,18 @@ You are an agent working **inside this folder**. Goal: generate/repair/merge Ara
 ## Golden rules
 - **Never overwrite** existing `parts/part_*.jsonl`. Create new files (`*_fixed.jsonl`, `*_v2.jsonl`).
 - **Never change taxonomy in-place**. If updating taxonomy, create a new version file (e.g., `taxonomy_itsm_v2.json`) and keep the old.
-- `dataset_clean.jsonl` / `dataset_clean.csv` are **generated**; safe to delete/regenerate.
+- `dataset_clean.*` / `dataset_rejected.jsonl` are **generated**; safe to delete/regenerate.
 
 ## Inputs/Outputs
-- Inputs: `parts/part_*.jsonl` (LLM-generated), `taxonomy_itsm.json`
-- Outputs: `dataset_clean.jsonl`, `dataset_clean.csv`
-- Derivation: `preprocessed_ar` is computed by `build_dataset.py`
+- Inputs: `parts/part_*.jsonl` (LLM-generated), `taxonomy_itsm_v1.json`
+- Outputs: `dataset_clean.jsonl`, `dataset_clean.csv`, `dataset_rejected.jsonl`
+- Note: no text preprocessing is applied; output contains raw Arabic text
 
 ## Standard operating procedure
 1) Generate a batch using `generation_contract_prompt_v1.md`
+   - When invoked, specify: number of tickets (N) and dialect (e.g., Egyptian)
+   - Provide the taxonomy file (@taxonomy_itsm_v1.json) for category constraints
    - Ensure output is **JSONL only**
-   - Ensure category path is from taxonomy
    - Save as `parts/part_###.jsonl`
 
 2) Validate/build
@@ -24,6 +25,7 @@ You are an agent working **inside this folder**. Goal: generate/repair/merge Ara
 
 3) Fix rejected rows (optional)
    - Feed rejected items to `fixer_prompt_v1.md`
+   - Provide the taxonomy file (@taxonomy_itsm_v1.json) for category constraints
    - Save repaired tickets to a new file: `parts/part_###_fixed.jsonl`
    - Re-run `python build_dataset.py`
 
@@ -36,6 +38,6 @@ You are an agent working **inside this folder**. Goal: generate/repair/merge Ara
 - Arabic dialect matches requested dialect (e.g., Egyptian); technical terms may remain English
 
 ## Common maintenance tasks
-- Add categories: create `taxonomy_itsm_v2.json`, update script constant `TAXONOMY_PATH`
+- Add categories: create `taxonomy_itsm_v2.json`, pass `--taxonomy taxonomy_itsm_v2.json` to the build script
 - Add more validation: extend `validate_row()` in `build_dataset.py`
 - Export variants: post-process `dataset_clean.csv` (do not edit raw parts)

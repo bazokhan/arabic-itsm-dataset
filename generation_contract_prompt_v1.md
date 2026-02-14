@@ -1,12 +1,20 @@
 You are generating synthetic ITSM support tickets in Arabic.
 
+REQUIRED VARIABLES (ask the user for any that were not provided before executing):
+- TAXONOMY_FILE: path to the taxonomy JSON file
+- N: number of tickets to generate
+- DIALECT: Arabic dialect to use (e.g., Egyptian colloquial)
+- OUTPUT_FILE: path to save the output JSONL file (e.g., parts/part_001.jsonl)
+
 OUTPUT FORMAT (STRICT):
 - Return JSON Lines (JSONL) only.
 - One JSON object per line.
 - No markdown, no commentary, no extra text.
+- Save output to OUTPUT_FILE.
 
-GENERATE {{N}} TICKETS.
-Dialect = {{DIALECT}} Arabic (Egyptian colloquial). You may keep common technical terms in English (e.g., VPN, WiFi, Outlook, DNS, MFA, SSO).
+TASK:
+- Generate N tickets in DIALECT Arabic
+- You may keep common technical terms in English (e.g., VPN, WiFi, Outlook, DNS, MFA, SSO)
 
 SCHEMA (REQUIRED KEYS EXACTLY):
 ticket_id: string (unique, format "TCKT-000001" etc.)
@@ -40,16 +48,13 @@ impact 1 & urgency 5 => priority 3
 impact 2 & urgency 2 => priority 2
 
 CATEGORY CONSTRAINT:
-Choose category_level_1/2/3 ONLY from the allowed taxonomy list below.
+Choose category_level_1/2/3 ONLY from the allowed taxonomy in TAXONOMY_FILE.
 category_path MUST exactly match the chosen levels.
-
-ALLOWED TAXONOMY (choose from these exact triples):
-[PASTE ALL ALLOWED "L1 > L2 > L3" VALUES HERE]
+Use only the valid "L1 > L2 > L3" combinations from that file.
 
 REALISM CONSTRAINTS:
 - Each ticket should sound like a real user request/complaint.
 - Use varied writing styles: concise, detailed, frustrated, polite, etc.
 - Ensure category matches the described problem.
 
-RETURN EXACTLY {{N}} JSON OBJECTS, ONE PER LINE.
-
+RETURN EXACTLY N JSON OBJECTS, ONE PER LINE.

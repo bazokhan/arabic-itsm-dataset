@@ -1,0 +1,21 @@
+# Generated outputs (safe to regenerate)
+dataset_clean.jsonl
+dataset_clean.csv
+dataset_rejected.jsonl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Current plan
+plan.md
