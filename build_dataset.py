@@ -73,7 +73,8 @@ def clamp(n: int, lo: int, hi: int) -> int:
     return max(lo, min(hi, n))
 
 def compute_priority(impact: int, urgency: int) -> int:
-    return clamp(int(round((impact + urgency) / 2)), 1, 5)
+    # Use (a+b+1)//2 for round-half-up; Python's round(4.5)==4 (banker's rounding)
+    return clamp((impact + urgency + 1) // 2, 1, 5)
 
 def validate_row(obj: Dict[str, Any], allowed_paths: set) -> List[str]:
     errors = []
@@ -243,6 +244,11 @@ def main():
                 if tid in seen_ids:
                     errs.append("bad:duplicate_ticket_id")
 
+                # Auto-fix priority when it's the only error
+                if errs == ["bad:priority_rule"] and isinstance(obj.get("impact"), int) and isinstance(obj.get("urgency"), int):
+                    obj["priority"] = compute_priority(obj["impact"], obj["urgency"])
+                    errs = []
+
                 if errs:
                     rejected.append({"source": fp, "line": line_no, "reason": errs, "ticket": obj})
                     continue
@@ -289,6 +295,11 @@ def main():
     print(f"Rejected rows: {len(rejected)}")
     if rejected:
         print(f"Rejected rows written to: {args.out_rejected}")
+        print("\n--- Rejected rows (id, cause) ---")
+        for r in rejected:
+            row_id = r.get("ticket", {}).get("ticket_id") or f"{r.get('source', '?')}:{r.get('line', '?')}"
+            causes = ", ".join(r.get("reason", []))
+            print(f"{row_id}\t{causes}")
 
     # Optional: print allowed paths for prompt pasting
     print("\n--- Allowed category paths (copy into prompt) ---")
