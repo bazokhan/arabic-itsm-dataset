@@ -4,6 +4,7 @@ A synthetic dataset of **10,000 Arabic IT support tickets**, labeled with a stru
 
 Tickets are written in Egyptian Arabic (عامية مصرية) and cover the full range of helpdesk scenarios: access issues, network problems, hardware faults, software errors, security incidents, and service requests. Arabic technical vocabulary is mixed with English terms as they naturally appear in real Egyptian workplace communication (VPN، WiFi، Outlook، MFA…).
 
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/bazokhan/arabic-itsm-dataset)
 [![View Notebook](https://img.shields.io/badge/Notebook-View%20on%20GitHub-blue?logo=jupyter)](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
 [![Browse Dataset](https://img.shields.io/badge/Dataset-FlatGitHub-lightgrey?logo=github)](https://flatgithub.com/bazokhan/arabic-itsm-dataset?filename=dataset_clean.csv)
@@ -79,32 +80,32 @@ df.head()
 | Service | Request | New Device, New Account, Software Install |
 | Service | Incident | Outage, Degradation, Intermittent |
 
-Full taxonomy with suggested tags per category: [`taxonomy_itsm_v1.json`](taxonomy_itsm_v1.json)
+Full taxonomy with suggested tags per category: [`taxonomy_itsm_v1.json`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/taxonomy_itsm_v1.json)
 
 ---
 
 ## How It Was Built
 
 **1. Design the taxonomy**
-The 3-level ITSM hierarchy in [`taxonomy_itsm_v1.json`](taxonomy_itsm_v1.json) was hand-crafted to reflect real IT helpdesk category trees. Each node includes suggested tags to guide generation toward realistic, domain-appropriate vocabulary.
+The 3-level ITSM hierarchy in [`taxonomy_itsm_v1.json`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/taxonomy_itsm_v1.json) was hand-crafted to reflect real IT helpdesk category trees. Each node includes suggested tags to guide generation toward realistic, domain-appropriate vocabulary.
 
 **2. Write the generation contract**
-[`prompts/generation_v1.md`](prompts/generation_v1.md) defines the full schema, the priority formula, the target dialect, category constraints, and realism requirements. This contract is what gets passed to the LLM alongside the taxonomy file.
+[`prompts/generation_v1.md`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/prompts/generation_v1.md) defines the full schema, the priority formula, the target dialect, category constraints, and realism requirements. This contract is what gets passed to the LLM alongside the taxonomy file.
 
 **3. Automated generation on a hosted VPS**
 The actual generation was done by [@DrEmadAgha](https://github.com/DrEmadAgha) using a self-hosted agentic framework running his own models on a VPS. The bots handled the full pipeline autonomously: generating tickets in chunks, running quality checks, deduplicating, enriching short descriptions, and validating against the taxonomy. The complete output of that run is `parts/part_001.jsonl` — all 10,000 tickets in one automated pass.
 
-The scripts driving that pipeline (all authored by @DrEmadAgha) are in [`scripts/`](scripts/):
+The scripts driving that pipeline (all authored by @DrEmadAgha) are in [`scripts/`](https://github.com/bazokhan/arabic-itsm-dataset/tree/master/scripts):
 
 | Script | What it does |
 |--------|--------------|
-| [`generate_tickets_local.py`](scripts/generate_tickets_local.py) | Template-based ticket generator — covers all 31 leaf categories with hardcoded Egyptian Arabic title/description templates |
-| [`dq_report.py`](scripts/dq_report.py) | Data quality report — validates a JSONL file and prints violation counts, distributions, and duplicate stats |
-| [`dedupe_variants.py`](scripts/dedupe_variants.py) | Deduplication pass — detects exact title+description duplicates and appends a unique contextual sentence to each duplicate to differentiate them |
-| [`postprocess_v2.py`](scripts/postprocess_v2.py) | Post-processing pass — remaps invalid L3 categories, fixes priority, and enriches short descriptions (<90 chars) with category-specific details (VPN error codes, Outlook error codes, WiFi SSIDs, etc.) |
+| [`generate_tickets_local.py`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/scripts/generate_tickets_local.py) | Template-based ticket generator — covers all 31 leaf categories with hardcoded Egyptian Arabic title/description templates |
+| [`dq_report.py`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/scripts/dq_report.py) | Data quality report — validates a JSONL file and prints violation counts, distributions, and duplicate stats |
+| [`dedupe_variants.py`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/scripts/dedupe_variants.py) | Deduplication pass — detects exact title+description duplicates and appends a unique contextual sentence to each duplicate to differentiate them |
+| [`postprocess_v2.py`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/scripts/postprocess_v2.py) | Post-processing pass — remaps invalid L3 categories, fixes priority, and enriches short descriptions (<90 chars) with category-specific details (VPN error codes, Outlook error codes, WiFi SSIDs, etc.) |
 
 **4. Final validation and merge**
-[`build_dataset.py`](build_dataset.py) provides a final schema validation pass on the generated parts:
+[`build_dataset.py`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/build_dataset.py) provides a final schema validation pass on the generated parts:
 - All required fields present and correctly typed
 - `channel` and `sentiment` within allowed values
 - `created_at` ≤ `updated_at`
@@ -112,13 +113,13 @@ The scripts driving that pipeline (all authored by @DrEmadAgha) are in [`scripts
 - `priority` satisfies `round((impact + urgency) / 2)`
 - No duplicate `ticket_id`
 
-Rows that pass are written to `dataset_clean.*`. Rows that fail go to `dataset_rejected.jsonl` with specific error codes. The fixer prompt at [`prompts/fixer_v1.md`](prompts/fixer_v1.md) can be used to repair rejects, which are then reintegrated with `python build_dataset.py --apply-fixes`.
+Rows that pass are written to `dataset_clean.*`. Rows that fail go to `dataset_rejected.jsonl` with specific error codes. The fixer prompt at [`prompts/fixer_v1.md`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/prompts/fixer_v1.md) can be used to repair rejects, which are then reintegrated with `python build_dataset.py --apply-fixes`.
 
 ---
 
 ## Explore the Data
 
-The notebook [`notebooks/inspect_data.ipynb`](notebooks/inspect_data.ipynb) covers:
+The notebook [`notebooks/inspect_data.ipynb`](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb) covers:
 
 - Class distribution across all 3 taxonomy levels (count + share)
 - Class balance analysis (imbalance ratio per level)
@@ -151,7 +152,7 @@ python build_dataset.py \
 python build_dataset.py --apply-fixes
 ```
 
-To generate additional tickets, use the prompts in [`prompts/`](prompts/) with any capable LLM:
+To generate additional tickets, use the prompts in [`prompts/`](https://github.com/bazokhan/arabic-itsm-dataset/tree/master/prompts) with any capable LLM:
 
 ```
 Execute prompts/generation_v1.md with:

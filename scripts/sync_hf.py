@@ -8,7 +8,11 @@ import os
 from huggingface_hub import HfApi
 
 REPO_ID = "albaz2000/arabic-itsm-dataset"
-DATA_FILES = ["dataset_clean.csv", "dataset_clean.jsonl"]
+DATA_FILES = [
+    "dataset_clean.csv",
+    "dataset_clean.jsonl",
+    "notebooks/inspect_data.ipynb",
+]
 
 api = HfApi(token=os.environ["HF_TOKEN"])
 

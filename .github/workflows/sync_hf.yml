@@ -6,6 +6,7 @@ on:
     paths:
       - dataset_clean.csv
       - dataset_clean.jsonl
+      - notebooks/inspect_data.ipynb
       - README.md
       - hf_readme_header.md
 
