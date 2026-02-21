@@ -4,7 +4,9 @@
       "Bash(ls:*)",
       "Bash(cd:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:nbviewer.org)"
+      "WebFetch(domain:nbviewer.org)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

@@ -92,7 +92,7 @@ The 3-level ITSM hierarchy in [`taxonomy_itsm_v1.json`](taxonomy_itsm_v1.json) w
 [`prompts/generation_v1.md`](prompts/generation_v1.md) defines the full schema, the priority formula, the target dialect, category constraints, and realism requirements. This contract is what gets passed to the LLM alongside the taxonomy file.
 
 **3. Automated generation on a hosted VPS**
-The actual generation was done by [@DrEmadAgha](https://github.com/DrEmadAgha) using [CLIProxyAPI](https://help.router-for.me/) on a self-hosted agentic framework running his own models on a VPS. The bots handled the full pipeline autonomously: generating tickets in chunks, running quality checks, deduplicating, enriching short descriptions, and validating against the taxonomy. The complete output of that run is `parts/part_001.jsonl` — all 10,000 tickets in one automated pass.
+The actual generation was done by [@DrEmadAgha](https://github.com/DrEmadAgha) using a self-hosted agentic framework running his own models on a VPS. The bots handled the full pipeline autonomously: generating tickets in chunks, running quality checks, deduplicating, enriching short descriptions, and validating against the taxonomy. The complete output of that run is `parts/part_001.jsonl` — all 10,000 tickets in one automated pass.
 
 The scripts driving that pipeline (all authored by @DrEmadAgha) are in [`scripts/`](scripts/):
 
@@ -201,7 +201,7 @@ arabic-itsm-dataset/
 
 ## Credits
 
-- **[@DrEmadAgha](https://github.com/DrEmadAgha)** — built and ran the automated generation pipeline using [CLIProxyAPI](https://help.router-for.me/) on a self-hosted VPS. Authored the generation, QA, deduplication, and post-processing scripts in `scripts/`. The 10,000 tickets in `parts/part_001.jsonl` are the output of his pipeline.
+- **[@DrEmadAgha](https://github.com/DrEmadAgha)** — built and ran the automated generation pipeline using a self-hosted VPS. Authored the generation, QA, deduplication, and post-processing scripts in `scripts/`. The 10,000 tickets in `parts/part_001.jsonl` are the output of his pipeline.
 - **[@bazokhan](https://github.com/bazokhan)** — designed the taxonomy, wrote the generation contract and fixer prompts, ran the final validation pass, and published the dataset.
 
 ---
