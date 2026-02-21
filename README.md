@@ -4,7 +4,7 @@ A synthetic dataset of **10,000 Arabic IT support tickets**, labeled with a stru
 
 Tickets are written in Egyptian Arabic (عامية مصرية) and cover the full range of helpdesk scenarios: access issues, network problems, hardware faults, software errors, security incidents, and service requests. Arabic technical vocabulary is mixed with English terms as they naturally appear in real Egyptian workplace communication (VPN، WiFi، Outlook، MFA…).
 
-[![Explore Notebook](https://img.shields.io/badge/Notebook-NBViewer-orange?logo=jupyter)](https://nbviewer.org/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
+[![View Notebook](https://img.shields.io/badge/Notebook-View%20on%20GitHub-blue?logo=jupyter)](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
 
 ---
@@ -125,7 +125,7 @@ The notebook [`notebooks/inspect_data.ipynb`](notebooks/inspect_data.ipynb) cove
 - Duplicate and missing-value checks
 - Cross-tabulations: category × sentiment, category × dialect
 
-**View rendered:** [NBViewer](https://nbviewer.org/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb) · [Google Colab](https://colab.research.google.com/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
+**View rendered:** [GitHub](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb) · [Run in Colab](https://colab.research.google.com/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
 
 ---
 
