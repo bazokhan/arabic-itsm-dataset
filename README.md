@@ -6,6 +6,8 @@ Tickets are written in Egyptian Arabic (عامية مصرية) and cover the ful
 
 [![View Notebook](https://img.shields.io/badge/Notebook-View%20on%20GitHub-blue?logo=jupyter)](https://github.com/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bazokhan/arabic-itsm-dataset/blob/master/notebooks/inspect_data.ipynb)
+[![Browse Dataset](https://img.shields.io/badge/Dataset-FlatGitHub-lightgrey?logo=github)](https://flatgithub.com/bazokhan/arabic-itsm-dataset?filename=dataset_clean.csv)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Dataset-yellow?logo=huggingface)](https://huggingface.co/datasets/albaz2000/arabic-itsm-dataset)
 
 ---
 
@@ -83,33 +85,34 @@ Full taxonomy with suggested tags per category: [`taxonomy_itsm_v1.json`](taxono
 
 ## How It Was Built
 
-Generation was agentic and iterative — not a one-shot bulk prompt.
-
 **1. Design the taxonomy**
-A 3-level ITSM hierarchy was hand-crafted to reflect real IT helpdesk category trees. Each node includes a list of suggested tags to guide generation toward realistic, domain-appropriate vocabulary.
+The 3-level ITSM hierarchy in [`taxonomy_itsm_v1.json`](taxonomy_itsm_v1.json) was hand-crafted to reflect real IT helpdesk category trees. Each node includes suggested tags to guide generation toward realistic, domain-appropriate vocabulary.
 
-**2. Write the generation prompt**
-[`prompts/generation_v1.md`](prompts/generation_v1.md) specifies the full schema, the priority formula, the target dialect, category constraints, and realism requirements. The LLM receives the taxonomy file and outputs raw JSONL — one ticket per line, no commentary.
+**2. Write the generation contract**
+[`prompts/generation_v1.md`](prompts/generation_v1.md) defines the full schema, the priority formula, the target dialect, category constraints, and realism requirements. This contract is what gets passed to the LLM alongside the taxonomy file.
 
-**3. Generate in batches**
-Tickets were generated in batches (~1,000 per run) and saved to `parts/part_NNN.jsonl`. Egyptian colloquial Arabic was used throughout, with common technical terms kept in English as they naturally appear.
+**3. Automated generation on a hosted VPS**
+The actual generation was done by [@DrEmadAgha](https://github.com/DrEmadAgha) using [CLIProxyAPI](https://help.router-for.me/) on a self-hosted agentic framework running his own models on a VPS. The bots handled the full pipeline autonomously: generating tickets in chunks, running quality checks, deduplicating, enriching short descriptions, and validating against the taxonomy. The complete output of that run is `parts/part_001.jsonl` — all 10,000 tickets in one automated pass.
 
-**4. Validate programmatically**
-[`build_dataset.py`](build_dataset.py) checks every row against the schema:
+The scripts driving that pipeline (all authored by @DrEmadAgha) are in [`scripts/`](scripts/):
+
+| Script | What it does |
+|--------|--------------|
+| [`generate_tickets_local.py`](scripts/generate_tickets_local.py) | Template-based ticket generator — covers all 31 leaf categories with hardcoded Egyptian Arabic title/description templates |
+| [`dq_report.py`](scripts/dq_report.py) | Data quality report — validates a JSONL file and prints violation counts, distributions, and duplicate stats |
+| [`dedupe_variants.py`](scripts/dedupe_variants.py) | Deduplication pass — detects exact title+description duplicates and appends a unique contextual sentence to each duplicate to differentiate them |
+| [`postprocess_v2.py`](scripts/postprocess_v2.py) | Post-processing pass — remaps invalid L3 categories, fixes priority, and enriches short descriptions (<90 chars) with category-specific details (VPN error codes, Outlook error codes, WiFi SSIDs, etc.) |
+
+**4. Final validation and merge**
+[`build_dataset.py`](build_dataset.py) provides a final schema validation pass on the generated parts:
 - All required fields present and correctly typed
 - `channel` and `sentiment` within allowed values
 - `created_at` ≤ `updated_at`
-- `category_path` exactly matches the three level fields and is a valid taxonomy path
+- `category_path` consistent with the three level fields and within the taxonomy
 - `priority` satisfies `round((impact + urgency) / 2)`
 - No duplicate `ticket_id`
 
-Rows that pass go to `dataset_clean.*`. Rows that fail go to `dataset_rejected.jsonl` with the specific error codes attached.
-
-**5. Fix and reintegrate rejects**
-Rejected rows were fed to [`prompts/fixer_v1.md`](prompts/fixer_v1.md), which repairs schema violations while preserving the original Arabic text. Fixed rows are merged back using `python build_dataset.py --apply-fixes`, which splices the fixed records into the original part files and rebuilds the clean dataset.
-
-**6. Final build**
-The output — `dataset_clean.csv` and `dataset_clean.jsonl` — is the merged, validated result of all passes.
+Rows that pass are written to `dataset_clean.*`. Rows that fail go to `dataset_rejected.jsonl` with specific error codes. The fixer prompt at [`prompts/fixer_v1.md`](prompts/fixer_v1.md) can be used to repair rejects, which are then reintegrated with `python build_dataset.py --apply-fixes`.
 
 ---
 
@@ -166,14 +169,20 @@ Execute prompts/generation_v1.md with:
 arabic-itsm-dataset/
 ├── dataset_clean.csv          # Final dataset — 10,000 rows (CSV)
 ├── dataset_clean.jsonl        # Final dataset — 10,000 rows (JSONL)
-├── build_dataset.py           # Validation + merge script
+├── build_dataset.py           # Final validation + merge script
 ├── taxonomy_itsm_v1.json      # 3-level ITSM taxonomy with tag suggestions
 ├── requirements.txt
 ├── prompts/
-│   ├── generation_v1.md       # LLM prompt for generating tickets
+│   ├── generation_v1.md       # LLM prompt / generation contract
 │   └── fixer_v1.md            # LLM prompt for repairing rejected rows
+├── scripts/                   # Generation + QA pipeline (by @DrEmadAgha)
+│   ├── generate_tickets_local.py  # Template-based ticket generator
+│   ├── dq_report.py               # Data quality report
+│   ├── dedupe_variants.py         # Deduplication pass
+│   ├── postprocess_v2.py          # Enrichment + category fix pass
+│   └── publish_hf.py              # One-time Hugging Face upload
 ├── parts/
-│   └── part_001.jsonl         # Raw generation output (10,000 tickets)
+│   └── part_001.jsonl         # Raw pipeline output (10,000 tickets)
 ├── examples/
 │   └── sample_ticket.jsonl    # Single example record showing the schema
 └── notebooks/
@@ -187,6 +196,13 @@ arabic-itsm-dataset/
 - **No text preprocessing is applied.** The dataset contains raw Arabic text as generated. Consumers should apply their own normalization (diacritics removal, alif normalization, etc.) as appropriate for their use case.
 - `priority` is enforced by the validator: `round((impact + urgency) / 2)` clamped to 1–5. Minor violations were auto-corrected during the build; rows with other errors went through the fix loop.
 - `dataset_rejected.jsonl` is a build artifact — not committed. It only appears locally when there are validation failures.
+
+---
+
+## Credits
+
+- **[@DrEmadAgha](https://github.com/DrEmadAgha)** — built and ran the automated generation pipeline using [CLIProxyAPI](https://help.router-for.me/) on a self-hosted VPS. Authored the generation, QA, deduplication, and post-processing scripts in `scripts/`. The 10,000 tickets in `parts/part_001.jsonl` are the output of his pipeline.
+- **[@bazokhan](https://github.com/bazokhan)** — designed the taxonomy, wrote the generation contract and fixer prompts, ran the final validation pass, and published the dataset.
 
 ---
 

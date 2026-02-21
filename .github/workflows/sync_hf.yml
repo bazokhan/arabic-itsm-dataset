@@ -1,0 +1,41 @@
+name: Sync dataset to Hugging Face
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - dataset_clean.csv
+      - dataset_clean.jsonl
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install huggingface_hub
+
+      - name: Push to Hugging Face Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'EOF'
+          import os
+          from huggingface_hub import HfApi
+
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          repo_id = "albaz2000/arabic-itsm-dataset"
+
+          for filename in ["dataset_clean.csv", "dataset_clean.jsonl"]:
+              api.upload_file(
+                  path_or_fileobj=filename,
+                  path_in_repo=filename,
+                  repo_id=repo_id,
+                  repo_type="dataset",
+              )
+              print(f"Pushed {filename}")
+          EOF
