@@ -202,7 +202,7 @@ arabic-itsm-dataset/
 
 ## Credits
 
-- **[Prof. Dr. Eman Sanad](https://scholar.cu.edu.eg/?q=esanad/publications)** — Professor of Information Technology, Faculty of Computers and Artificial Intelligence, Cairo University. Supervised this project and provided the original idea and research direction.
+- **[Assistant Professor Dr. Eman Sanad](https://scholar.cu.edu.eg/?q=esanad/publications)** — Assistant Professor of Information Technology, Faculty of Computing and Artificial Intelligence, Cairo University. Supervised this project and provided the original idea and research direction.
 - **[@DrEmadAgha](https://github.com/DrEmadAgha)** — built and ran the automated generation pipeline using a self-hosted VPS. Authored the generation, QA, deduplication, and post-processing scripts in `scripts/`. The 10,000 tickets in `parts/part_001.jsonl` are the output of his pipeline.
 - **[@bazokhan](https://github.com/bazokhan)** — designed the taxonomy, wrote the generation contract and fixer prompts, ran the final validation pass, and published the dataset.
 
