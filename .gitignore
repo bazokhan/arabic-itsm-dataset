@@ -1,6 +1,4 @@
-# Generated outputs (safe to regenerate)
-dataset_clean.jsonl
-dataset_clean.csv
+# Build artifacts
 dataset_rejected.jsonl
 
 # Python
@@ -17,5 +15,8 @@ venv/
 .vscode/
 .idea/
 
-# Current plan
+# Claude Code internals
+.claude/
+
+# Working files
 plan.md
