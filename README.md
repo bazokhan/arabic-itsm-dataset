@@ -45,8 +45,8 @@ df.head()
 | `title_ar` | string | Short Arabic title |
 | `description_ar` | string | Full Arabic description body |
 | `category_level_1` | string | Top-level category (6 classes) |
-| `category_level_2` | string | Sub-category (14 classes) |
-| `category_level_3` | string | Leaf category (31 classes) |
+| `category_level_2` | string | Sub-category (16 classes) |
+| `category_level_3` | string | Leaf category (48 classes) |
 | `category_path` | string | Composite `"L1 > L2 > L3"` — always consistent with the three levels |
 | `tags` | JSON array | 2–6 keyword tags |
 | `labels_json` | JSON object | `{l1, l2, l3, tags}` — structured label object |
@@ -59,7 +59,7 @@ df.head()
 
 ## Taxonomy
 
-6 top-level categories → 14 sub-categories → 31 leaf categories:
+6 top-level categories → 16 sub-categories → 48 leaf categories:
 
 | L1 | L2 | L3 |
 |----|----|----|
@@ -197,6 +197,7 @@ arabic-itsm-dataset/
 - **No text preprocessing is applied.** The dataset contains raw Arabic text as generated. Consumers should apply their own normalization (diacritics removal, alif normalization, etc.) as appropriate for their use case.
 - `priority` is enforced by the validator: `round((impact + urgency) / 2)` clamped to 1–5. Minor violations were auto-corrected during the build; rows with other errors went through the fix loop.
 - `dataset_rejected.jsonl` is a build artifact — not committed. It only appears locally when there are validation failures.
+- **451 residual duplicates**: Analysis of the released dataset found 451 exact `(title_ar, description_ar)` duplicate pairs (~4.5% of rows). These survived the `dedupe_variants.py` pass because that script enriches duplicates rather than removing them, and the enrichment did not fully differentiate all pairs. Consumers should apply `df.drop_duplicates(subset=['title_ar', 'description_ar'], keep='first')` during preprocessing to prevent train/test leakage.
 
 ---
 
