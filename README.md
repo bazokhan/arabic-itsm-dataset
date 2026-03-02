@@ -209,6 +209,19 @@ arabic-itsm-dataset/
 
 ---
 
+## Citation
+
+```bibtex
+@misc{elbaz2026arabic_itsm_dataset,
+  title   = {Arabic ITSM Dataset: Synthetic Egyptian Arabic Helpdesk Tickets with 3-Level ITSM Taxonomy},
+  author  = {Elbaz, Mohamed A. and Sanad, Eman and Agha, Emad},
+  year    = {2026},
+  note    = {Professional Master's Project, Faculty of Computers and Artificial Intelligence, Cairo University. Supervised by Assistant Professor Dr. Eman Sanad.}
+}
+```
+
+---
+
 ## License
 
 MIT
