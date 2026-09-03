@@ -30,7 +30,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--rater_a", required=True)
     parser.add_argument("--rater_b", required=True)
-    parser.add_argument("--output", default="D:/AI/arabic-itsm-paper/annotation/iaa_results.json")
+    parser.add_argument("--output", default="assets/iaa_results.json")
     args = parser.parse_args()
 
     ra = pd.read_csv(args.rater_a, encoding="utf-8-sig")

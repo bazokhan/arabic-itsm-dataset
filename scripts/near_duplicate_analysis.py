@@ -15,6 +15,7 @@ Usage:
 
 import argparse
 import json
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -28,11 +29,13 @@ def load_text(path: str) -> pd.Series:
 
 
 def main():
+    repo_root = Path(__file__).resolve().parents[1]
+    classification_root = repo_root.parent / "arabic-itsm-classification"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", default="D:/AI/arabic-itsm-classification/data/processed/train.csv")
-    parser.add_argument("--test",  default="D:/AI/arabic-itsm-classification/data/processed/test.csv")
+    parser.add_argument("--train", default=str(classification_root / "data/processed/train.csv"))
+    parser.add_argument("--test", default=str(classification_root / "data/processed/test.csv"))
     parser.add_argument("--threshold", type=float, default=0.9)
-    parser.add_argument("--output", default="D:/AI/arabic-itsm-paper/results/near_duplicate_report.json")
+    parser.add_argument("--output", default=str(repo_root / "analysis/near_duplicate_report.json"))
     args = parser.parse_args()
 
     print("Loading data...")

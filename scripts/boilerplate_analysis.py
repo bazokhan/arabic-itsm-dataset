@@ -15,15 +15,18 @@ import json
 import re
 import sys
 from collections import Counter, defaultdict
+from pathlib import Path
 
 import pandas as pd
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-TRAIN = "D:/AI/arabic-itsm-classification/data/processed/train.csv"
-TEST  = "D:/AI/arabic-itsm-classification/data/processed/test.csv"
-VAL   = "D:/AI/arabic-itsm-classification/data/processed/val.csv"
-OUTPUT = "D:/AI/arabic-itsm-paper/results/boilerplate_report.json"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+CLASSIFICATION_ROOT = REPO_ROOT.parent / "arabic-itsm-classification"
+TRAIN = CLASSIFICATION_ROOT / "data/processed/train.csv"
+TEST = CLASSIFICATION_ROOT / "data/processed/test.csv"
+VAL = CLASSIFICATION_ROOT / "data/processed/val.csv"
+OUTPUT = REPO_ROOT / "analysis/boilerplate_report.json"
 
 MIN_TICKETS  = 50    # phrase must appear in at least this many tickets
 NGRAM_SIZES  = [5, 6, 7, 8]   # word n-gram lengths to check
@@ -138,6 +141,7 @@ def main():
         ],
     }
 
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(f"\nFull report saved to: {OUTPUT}")

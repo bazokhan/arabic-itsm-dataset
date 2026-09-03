@@ -1,7 +1,7 @@
 ---
 language:
 - ar
-license: mit
+license: cc-by-nc-4.0
 task_categories:
 - text-classification
 task_ids:

@@ -21,6 +21,7 @@ Output:
 
 import argparse
 import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 
@@ -150,13 +151,15 @@ GENERAL INSTRUCTIONS
 
 
 def main():
+    repo_root = Path(__file__).resolve().parents[1]
+    classification_root = repo_root.parent / "arabic-itsm-classification"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", default="D:/AI/arabic-itsm-classification/data/processed/train.csv")
-    parser.add_argument("--val",   default="D:/AI/arabic-itsm-classification/data/processed/val.csv")
-    parser.add_argument("--test",  default="D:/AI/arabic-itsm-classification/data/processed/test.csv")
+    parser.add_argument("--train", default=str(classification_root / "data/processed/train.csv"))
+    parser.add_argument("--val", default=str(classification_root / "data/processed/val.csv"))
+    parser.add_argument("--test", default=str(classification_root / "data/processed/test.csv"))
     parser.add_argument("--n", type=int, default=100)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--output", default="D:/AI/arabic-itsm-paper/annotation/")
+    parser.add_argument("--output", default=str(repo_root / "annotation_working"))
     args = parser.parse_args()
 
     dfs = []

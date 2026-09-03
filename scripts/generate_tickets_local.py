@@ -108,7 +108,7 @@ def pick_title_desc(l1,l2,l3):
     return random.choice(titles), random.choice(descs)
 
 def gen(index: str, count: int, outfile: Path, model_name: str = "gemini-3-flash", dialect: str = "Egyptian"):
-    combos = load_taxonomy(Path("taxonomy.json"))
+    combos = load_taxonomy(Path("taxonomy_itsm_v1.json"))
     rng = random.Random()
     with outfile.open('w', encoding='utf-8') as f:
         for seq in range(1, count+1):

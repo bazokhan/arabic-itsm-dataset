@@ -1,0 +1,21 @@
+{
+  "n_annotated": 101,
+  "naturalness": {
+    "weighted_kappa_linear": 0.4049,
+    "mean_pooled": 3.401,
+    "pct_both_rated_4_or_5": 34.7
+  },
+  "label_correctness_by_level": {
+    "L1": {"n": 101, "cohen_kappa": 0.7854, "raw_agreement_pct": 95.0, "pct_both_correct": 87.1},
+    "L2": {"n": 101, "cohen_kappa": 0.7084, "raw_agreement_pct": 92.1, "pct_both_correct": 84.2},
+    "L3": {"n": 101, "cohen_kappa": 0.63, "raw_agreement_pct": 84.2, "pct_both_correct": 68.3}
+  },
+  "per_l1_naturalness": {
+    "Access": {"n": 20, "mean_naturalness": 3.5},
+    "Hardware": {"n": 19, "mean_naturalness": 3.18},
+    "Network": {"n": 18, "mean_naturalness": 3.44},
+    "Security": {"n": 12, "mean_naturalness": 3.71},
+    "Service": {"n": 13, "mean_naturalness": 2.92},
+    "Software": {"n": 19, "mean_naturalness": 3.61}
+  }
+}

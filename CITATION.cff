@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "Please cite this dataset release and the associated paper. Dataset and research materials are licensed CC BY-NC 4.0; repository software is AGPL-3.0-or-later. See LICENSE."
+type: dataset
+title: "ArabicITSM-9K: Synthetic Egyptian Arabic IT Service Management Tickets"
+version: 1.0.0
+license: CC-BY-NC-4.0
+authors:
+  - family-names: Elbaz
+    given-names: Mohamed A.
+    affiliation: "Faculty of Computing and Artificial Intelligence, Cairo University"
+  - family-names: Sanad
+    given-names: Eman E.
+    affiliation: "Faculty of Computing and Artificial Intelligence, Cairo University"
+  - family-names: Agha
+    given-names: Emad
+repository-code: "https://github.com/bazokhan/arabic-itsm-dataset"
+url: "https://huggingface.co/datasets/albaz2000/arabic-itsm-dataset"
+keywords:
+  - Arabic
+  - Egyptian Arabic
+  - IT service management
+  - ticket classification
+  - synthetic dataset
+  - hierarchical classification

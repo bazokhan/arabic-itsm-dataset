@@ -1,0 +1,45 @@
+ARABICITSM-9K MIXED-LICENSE NOTICE
+
+Copyright (c) 2026 Mohamed A. Elbaz, Eman E. Sanad, and Emad Agha.
+
+The contents of this repository are licensed as follows:
+
+1. Dataset and research materials
+
+The dataset files, taxonomy, prompts, documentation, figures, aggregate audit
+materials, and other non-software research materials are licensed under the
+Creative Commons Attribution-NonCommercial 4.0 International licence
+(CC BY-NC 4.0):
+
+https://creativecommons.org/licenses/by-nc/4.0/
+
+The complete licence text is included at `LICENSES/CC-BY-NC-4.0.txt`.
+
+You may share and adapt those materials for non-commercial purposes provided
+that appropriate credit is given, a link to the licence is supplied, and
+changes are indicated. Commercial use requires separate written permission
+from the copyright holders.
+
+2. Software
+
+Source-code files in this repository, including the Python programs under
+scripts/, are licensed under the GNU Affero General Public License, version 3
+or any later version (AGPL-3.0-or-later):
+
+https://www.gnu.org/licenses/agpl-3.0.html
+
+The complete licence text is included at `LICENSES/AGPL-3.0-or-later.txt`.
+
+The software is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
+details.
+
+3. Third-party material
+
+Third-party names and trademarks remain the property of their respective
+owners. This notice does not grant rights that the copyright holders do not
+possess.
+
+For commercial licensing enquiries, contact the authors through the contact
+channels listed in the associated publication or repository.
