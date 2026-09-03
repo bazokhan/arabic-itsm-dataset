@@ -220,11 +220,10 @@ The release includes the deterministic sampling code, complete rating rubric, a 
 Machine-readable citation metadata are provided in [`CITATION.cff`](CITATION.cff). After the first archived GitHub release, cite the version DOI issued by Zenodo.
 
 ```bibtex
-@misc{elbaz2026arabic_itsm_dataset,
-  title   = {Arabic ITSM Dataset: Synthetic Egyptian Arabic Helpdesk Tickets with 3-Level ITSM Taxonomy},
-  author  = {Elbaz, Mohamed A. and Sanad, Eman and Agha, Emad},
-  year    = {2026},
-  note    = {Professional Master's Project, Faculty of Computers and Artificial Intelligence, Cairo University. Supervised by Assistant Professor Dr. Eman Sanad.}
+@misc{elbaz2026hierarchical,
+  title  = {Hierarchical Classification for Arabic ITSM Tickets: A Synthetic Dataset and Multi-Task Benchmark},
+  author = {Elbaz, Mohamed A. and Fayed, Diaa M. and Sanad, Eman E.},
+  year   = {2026}
 }
 ```
 
